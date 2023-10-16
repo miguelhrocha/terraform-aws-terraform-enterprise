@@ -274,13 +274,13 @@ variable "tfe_license_file_location" {
 }
 
 variable "tls_bootstrap_cert_pathname" {
-  default     = null
+  default     = "/var/lib/terraform-enterprise/certificate.pem"
   type        = string
   description = "The path on the TFE instance to put the certificate. ex. '/var/lib/terraform-enterprise/certificate.pem'"
 }
 
 variable "tls_bootstrap_key_pathname" {
-  default     = null
+  default     = "/var/lib/terraform-enterprise/key.pem"
   type        = string
   description = "The path on the TFE instance to put the key. ex. '/var/lib/terraform-enterprise/key.pem'"
 }
@@ -367,6 +367,12 @@ variable "existing_iam_instance_role_name" {
   default     = null
   description = "The IAM role to associate with the instance profile. Leave the value null to create a new one."
   type        = string
+}
+
+variable "health_check_grace_period" {
+  default     = null
+  description = "The health grace period aws provides to allow for an instance to pass it's health check."
+  type        = number
 }
 
 variable "iam_role_policy_arns" {

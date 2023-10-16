@@ -117,15 +117,15 @@ module "database" {
 # Docker Compose File Config for TFE on instance(s) using Flexible Deployment Options
 # ------------------------------------------------------------------------------------
 module "docker_compose_config" {
-  source = "git::https://github.com/hashicorp/terraform-random-tfe-utility//modules/docker_compose_config?ref=main"
+  source = "git::https://github.com/hashicorp/terraform-random-tfe-utility//modules/docker_compose_config?ref=ah/tf-8609-fdo-6"
   count  = var.is_replicated_deployment ? 0 : 1
 
   hostname                  = local.fqdn
   tfe_license               = var.hc_license
   license_reporting_opt_out = var.license_reporting_opt_out
-  operational_mode          = var.operational_mode
-  cert_file                 = var.tls_bootstrap_cert_pathname
-  key_file                  = var.tls_bootstrap_key_pathname
+  operational_mode          = local.fdo_operational_mode
+  cert_file                 = "/etc/ssl/private/terraform-enterprise/cert.pem"
+  key_file                  = "/etc/ssl/private/terraform-enterprise/key.pem"
   tfe_image                 = var.tfe_image
   tls_ca_bundle_file        = var.tls_ca_bundle_file
   tls_ciphers               = var.tls_ciphers
@@ -170,11 +170,11 @@ module "docker_compose_config" {
 # AWS cloud init used to install and configure TFE on instance(s) using Flexible Deployment Options
 # --------------------------------------------------------------------------------------------------
 module "tfe_init_fdo" {
-  source = "git::https://github.com/hashicorp/terraform-random-tfe-utility//modules/tfe_init?ref=main"
+  source = "git::https://github.com/hashicorp/terraform-random-tfe-utility//modules/tfe_init?ref=ah/tf-8609-fdo-6"
   count  = var.is_replicated_deployment ? 0 : 1
 
   cloud             = "aws"
-  operational_mode  = var.operational_mode
+  operational_mode  = local.fdo_operational_mode
   custom_image_tag  = var.custom_image_tag
   enable_monitoring = var.enable_monitoring
 
@@ -350,9 +350,10 @@ module "vm" {
   ebs_iops                            = var.ebs_iops
   ebs_delete_on_termination           = var.ebs_delete_on_termination
   friendly_name_prefix                = var.friendly_name_prefix
-  key_name                            = var.key_name
+  health_check_grace_period           = var.health_check_grace_period
   instance_type                       = var.instance_type
   is_replicated_deployment            = var.is_replicated_deployment
+  key_name                            = var.key_name
   network_id                          = local.network_id
   network_subnets_private             = local.network_private_subnets
   network_private_subnet_cidrs        = local.network_private_subnet_cidrs
